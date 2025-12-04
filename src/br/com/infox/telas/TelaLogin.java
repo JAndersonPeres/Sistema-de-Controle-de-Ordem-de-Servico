@@ -4,7 +4,9 @@
  */
 package br.com.infox.telas;
 import br.com.infox.dal.ModuloConexao;
+import java.awt.Color;
 import java.sql.*;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -23,7 +25,37 @@ public class TelaLogin extends javax.swing.JFrame {
         initComponents();
         conexao = ModuloConexao.conector();
         if(conexao != null){
-            lblStatus.setIcon(new javax.swing.ImageIcon(getClass().getResource("")));
+            lblStatus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icone/db_ok.png")));
+        } else {
+            lblStatus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icone/db_error.png")));
+        }
+    }
+    
+    private void logar(){
+        String sql = "SELECT * FROM tbusuarios WHERE login = ? AND senha = ?";
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, txtLogin.getText());
+            String captura = new String(txtSenha.getPassword());
+            pst.setString(2, captura);
+            rs = pst.executeQuery();
+            if(rs.next()){
+                String perfil = rs.getString(6);
+                TelaPrincipal principal = new TelaPrincipal();
+                principal.setVisible(true);
+                TelaPrincipal.lblUsuario.setText(rs.getString(2));
+                if(perfil.equals("admin")){
+                    TelaPrincipal.lblUsuario.setForeground(Color.red);
+                    TelaPrincipal.menCadUsu.setEnabled(true);
+                    TelaPrincipal.menRel.setEnabled(true);
+                }
+                this.dispose();
+                conexao.close();
+            } else {
+                JOptionPane.showMessageDialog(null, "Usuário e/ou Senha Inválido(s)!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
         }
     }
 
@@ -56,6 +88,11 @@ public class TelaLogin extends javax.swing.JFrame {
         lblStatus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icone/db_error.png"))); // NOI18N
 
         btnLogin.setText("Login");
+        btnLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoginActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -96,6 +133,11 @@ public class TelaLogin extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
+        // TODO add your handling code here:
+        logar();
+    }//GEN-LAST:event_btnLoginActionPerformed
 
     /**
      * @param args the command line arguments
