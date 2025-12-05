@@ -83,6 +83,39 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, e);
         }
     }
+    
+    private void atualizar(){
+        String sql = "UPDATE tbusuarios SET usuario=?,fone=?,login=?,senha=?,perfil=? WHERE iduser=?";
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, txtNome.getText());
+            pst.setString(2, txtFone.getText());
+            pst.setString(3, txtLogin.getText());
+            pst.setString(4, txtSenha.getText());
+            pst.setString(5, cboPerfil.getSelectedItem().toString());
+            pst.setString(6, txtID.getText());
+            if(verificarCampos()){
+                int upd = pst.executeUpdate();
+                if (upd > 0){
+                    JOptionPane.showMessageDialog(null, "Usuário Alterado com Sucesso!");
+                    btnCreate.setEnabled(true);
+                    btnUpdate.setEnabled(false);
+                    btnDelete.setEnabled(false);
+                    txtNome.setText(null);
+                    txtFone.setText(null);
+                    txtLogin.setText(null);
+                    txtSenha.setText(null);
+                    cboPerfil.setSelectedItem("Selecionar...");
+                    txtID.setText(null);
+                    txtID.setEnabled(true);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Preencha Todos os Campos Obrigatórios!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -148,6 +181,11 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
 
         btnUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icone/update.png"))); // NOI18N
         btnUpdate.setEnabled(false);
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
+            }
+        });
 
         btnRead.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icone/read.png"))); // NOI18N
         btnRead.addActionListener(new java.awt.event.ActionListener() {
@@ -249,6 +287,11 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
         consultar();
     }//GEN-LAST:event_btnReadActionPerformed
+
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        // TODO add your handling code here:
+        atualizar();
+    }//GEN-LAST:event_btnUpdateActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
