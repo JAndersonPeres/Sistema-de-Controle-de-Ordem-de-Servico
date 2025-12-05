@@ -29,6 +29,14 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
         return !(txtNome.getText().isBlank() || txtLogin.getText().isBlank() || txtSenha.getText().isBlank() || cboPerfil.getSelectedItem().toString().equals("Selecionar..."));
     }
     
+    private void limparCampos(){
+        txtNome.setText(null);
+        txtFone.setText(null);
+        txtLogin.setText(null);
+        txtSenha.setText(null);
+        cboPerfil.setSelectedItem("Selecionar...");
+    }
+    
     private void adicionar(){
         String sql = "INSERT INTO tbusuarios(usuario,fone,login,senha,perfil) VALUES (?,?,?,?,?)";
         try {
@@ -44,11 +52,7 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
                 int add = pst.executeUpdate();
                 if(add > 0){
                     JOptionPane.showMessageDialog(null, "Usuário Cadastrado com Sucesso!\nCampo \"ID\" foi Desconsiderado!");
-                    txtNome.setText(null);
-                    txtFone.setText(null);
-                    txtLogin.setText(null);
-                    txtSenha.setText(null);
-                    cboPerfil.setSelectedItem("Selecionar...");
+                    limparCampos();
                 }
             }
         } catch (Exception e) {
@@ -101,11 +105,7 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
                     btnCreate.setEnabled(true);
                     btnUpdate.setEnabled(false);
                     btnDelete.setEnabled(false);
-                    txtNome.setText(null);
-                    txtFone.setText(null);
-                    txtLogin.setText(null);
-                    txtSenha.setText(null);
-                    cboPerfil.setSelectedItem("Selecionar...");
+                    limparCampos();
                     txtID.setText(null);
                     txtID.setEnabled(true);
                 }
