@@ -66,12 +66,12 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
             pst = conexao.prepareStatement(sql);
             pst.setString(1, txtID.getText());
             if (!txtID.getText().isBlank()){
-                txtID.setEnabled(false);
-                btnCreate.setEnabled(false);
-                btnUpdate.setEnabled(true);
-                btnDelete.setEnabled(true);
                 rs = pst.executeQuery();
                 if(rs.next()){
+                    txtID.setEnabled(false);
+                    btnCreate.setEnabled(false);
+                    btnUpdate.setEnabled(true);
+                    btnDelete.setEnabled(true);
                     txtNome.setText(rs.getString(2));
                     txtFone.setText(rs.getString(3));
                     txtLogin.setText(rs.getString(4));
@@ -79,6 +79,8 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
                     cboPerfil.setSelectedItem(rs.getString(6));
                 } else {
                     JOptionPane.showMessageDialog(null, "Usuário Inexistente!");
+                    limparCampos();
+                    txtID.setText(null);
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Campo \"ID\" não Preenchido!");
@@ -116,6 +118,33 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, e);
         }
     }
+    
+    private void remover(){
+        int confirma = JOptionPane.showConfirmDialog(null, "Tem Certeza que Deseja Apagar esse Usuário?", "Atenção!", JOptionPane.YES_NO_OPTION);
+        if(confirma == JOptionPane.YES_OPTION){
+            String sql = "DELETE FROM tbusuarios WHERE iduser=?";
+            try {
+                pst = conexao.prepareStatement(sql);
+                pst.setString(1, txtID.getText());
+                if(!txtID.getText().isBlank()){
+                    int dlt = pst.executeUpdate();
+                    if (dlt > 0){
+                        JOptionPane.showMessageDialog(null, "Usuário Removido com Sucesso!");
+                        btnCreate.setEnabled(true);
+                        btnUpdate.setEnabled(false);
+                        btnDelete.setEnabled(false);
+                        limparCampos();
+                        txtID.setText(null);
+                        txtID.setEnabled(true);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Preencha o Campo ID!");
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -146,7 +175,7 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
 
         setClosable(true);
         setIconifiable(true);
-        setTitle("X System - Users");
+        setTitle("Usuários");
 
         lblID.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         lblID.setText("ID");
@@ -177,9 +206,16 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
         });
 
         btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icone/delete.png"))); // NOI18N
+        btnDelete.setToolTipText("Remover");
         btnDelete.setEnabled(false);
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
 
         btnUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icone/update.png"))); // NOI18N
+        btnUpdate.setToolTipText("Atualizar");
         btnUpdate.setEnabled(false);
         btnUpdate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -188,6 +224,7 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
         });
 
         btnRead.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icone/read.png"))); // NOI18N
+        btnRead.setToolTipText("Procurar");
         btnRead.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnReadActionPerformed(evt);
@@ -292,6 +329,11 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
         atualizar();
     }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        // TODO add your handling code here:
+        remover();
+    }//GEN-LAST:event_btnDeleteActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
